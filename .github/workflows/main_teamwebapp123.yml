@@ -3,6 +3,7 @@
 
 name: Build and deploy JAR app to Azure Web App - teamwebapp123
 
+
 on:
   push:
     branches:
@@ -13,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # Required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +22,8 @@ jobs:
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
-          java-version: 'java21'
-          distribution: 'microsoft'
+          java-version: '21'  # ✅ Fixed Java version
+          distribution: 'temurin'  # ✅ Use a valid distribution (temurin, adopt, zulu, etc.)
 
       - name: Build with Maven
         run: mvn clean install
@@ -40,8 +41,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write  # Required for requesting the JWT
+      contents: read    # Required for actions/checkout
   
     steps:
       - name: Download artifact from build job
@@ -52,9 +53,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_58E5DDF8897F45CC810E8FD36ACF5ABE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A4747D24FE384715A6AEDD61900BFAB0 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_34A046D7200E425F9189D4BD21E2EC87 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -63,4 +64,5 @@ jobs:
           app-name: 'teamwebapp123'
           slot-name: 'Production'
           package: '*.jar'
+
           
